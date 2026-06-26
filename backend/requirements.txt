@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-multipart
+opencv-python-headless
+numpy
+scipy
+scikit-learn
+xgboost
+pillow
+python-dateutil

@@ -114,18 +114,19 @@ def fetch_history(limit: int = 20) -> list[dict[str, Any]]:
 def detect_fraud(norm_R: float, norm_G: float, norm_B: float) -> dict:
     """
     AI Stage 1: Fraud Detection Logic Matrix.
-    Uses exact scientific thresholds derived from UV fluorescence physics.
+    Calibrated for smartphone CMOS sensors under 365nm UV inside a darkbox.
+    Accounts for blue LED leakage/reflections and camera exposure compression.
 
     Channel mapping:
       Red   → 670-680 nm  → Chlorophyll indicator
       Green → 525-550 nm  → Antioxidants / Phenols / Vitamin E
       Blue  → 430-450 nm  → Oxidation / Industrial refining marker
     """
-    # Authentic EVOO: strong Red (chlorophyll), moderate Green, low Blue
-    if norm_R > 600 and norm_G > 250 and norm_B < 150:
+    # Authentic EVOO: strong Red (chlorophyll), moderate Green, low-medium Blue (due to reflection)
+    if norm_R > 400 and norm_G > 150 and norm_B < 380 and norm_R > norm_B:
         confidence = min(
             100.0,
-            round(((norm_R - 600) / 400 * 50) + ((250 - norm_B) / 250 * 50), 1),
+            round(((norm_R - 400) / 600 * 50) + ((380 - norm_B) / 380 * 50), 1),
         )
         return {
             "passed":     True,
@@ -135,8 +136,8 @@ def detect_fraud(norm_R: float, norm_G: float, norm_B: float) -> dict:
             "confidence": confidence,
         }
 
-    # Industrial seed oil: near-zero Red & Green, dominant Blue (no chlorophyll)
-    if norm_R < 50 and norm_G < 50 and norm_B > 600:
+    # Industrial seed oil: low Red & Green, dominant Blue (no chlorophyll)
+    if norm_R < 120 and norm_G < 120 and norm_B > 450:
         return {
             "passed":     False,
             "verdict":    "industrial_seed_oil",
@@ -145,11 +146,11 @@ def detect_fraud(norm_R: float, norm_G: float, norm_B: float) -> dict:
                 "Blue channel dominance detected. No chlorophyll. "
                 "Consistent with canola, soy, sunflower, or corn oil."
             ),
-            "confidence": round(norm_B / 10, 1),
+            "confidence": min(100.0, round(norm_B / 10, 1)),
         }
 
-    # Adulterated blend: chlorophyll present BUT abnormally high Blue
-    if norm_R > 500 and norm_G > 200 and norm_B > 300:
+    # Adulterated blend: chlorophyll present BUT abnormally high Blue (exceeding EVOO reflection floor)
+    if norm_R > 350 and norm_G > 150 and norm_B >= 380:
         return {
             "passed":     False,
             "verdict":    "adulterated_blend",
@@ -158,7 +159,7 @@ def detect_fraud(norm_R: float, norm_G: float, norm_B: float) -> dict:
                 "Abnormally high blue channel alongside chlorophyll signal. "
                 "Possible artificial chlorophyll coloring added to seed oil."
             ),
-            "confidence": round(norm_B / 10, 1),
+            "confidence": min(100.0, round(norm_B / 10, 1)),
         }
 
     # Borderline / inconclusive pattern

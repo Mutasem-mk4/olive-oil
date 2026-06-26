@@ -1,0 +1,19 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AZURE_CUSTOM_VISION_ENDPOINT": "",
+    "AZURE_CUSTOM_VISION_KEY": "",
+    "AZURE_CUSTOM_VISION_PROJECT_ID": "",
+    "AZURE_CUSTOM_VISION_ITERATION": "Iteration1",
+    "AZURE_COSMOS_CONNECTION_STRING": "",
+    "AZURE_COSMOS_DATABASE": "zaytoun-vision",
+    "AZURE_STORAGE_CONNECTION_STRING": "",
+    "AZURE_STORAGE_CONTAINER": "sample-images"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*"
+  }
+}

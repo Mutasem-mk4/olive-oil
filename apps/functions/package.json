@@ -1,0 +1,37 @@
+{
+  "name": "zaytoun-vision-functions",
+  "version": "1.0.0",
+  "description": "Azure Functions backend for Zaytoun Vision — olive oil adulteration detection using AI",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "func start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.2.0",
+    "@azure/storage-blob": "^12.26.0",
+    "jpeg-js": "^0.4.4",
+    "node-fetch": "^3.3.2",
+    "pngjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@azure/functions": "^4.6.0",
+    "@types/node": "^20.0.0",
+    "@types/pngjs": "^6.0.5",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "azure-functions",
+    "olive-oil",
+    "custom-vision",
+    "adulteration-detection",
+    "hackathon"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Zaytoun Vision Favicon: Stylized olive with leaf -->
+  <defs>
+    <linearGradient id="olive-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A7C59"/>
+      <stop offset="100%" stop-color="#2D5016"/>
+    </linearGradient>
+    <linearGradient id="leaf-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6BAF4B"/>
+      <stop offset="100%" stop-color="#2D5016"/>
+    </linearGradient>
+  </defs>
+  <!-- Olive fruit -->
+  <ellipse cx="16" cy="18" rx="8" ry="10" fill="url(#olive-grad)"/>
+  <!-- Highlight -->
+  <ellipse cx="13" cy="14" rx="2.5" ry="3.5" fill="rgba(255,255,255,0.2)" transform="rotate(-15 13 14)"/>
+  <!-- Stem -->
+  <path d="M16 8 Q18 4 22 3" stroke="#8B6914" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Leaf -->
+  <path d="M20 5 Q24 2 26 4 Q24 7 20 5Z" fill="url(#leaf-grad)"/>
+</svg>

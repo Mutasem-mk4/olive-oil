@@ -1,6 +1,6 @@
 # 🫒 Zaytoun Vision
 
-**AI-powered olive oil authenticity screening tool using UV fluorescence analysis.**
+**Olive oil screening tool using UV fluorescence analysis and EEM quality modeling.**
 
 Upload a smartphone photo of your olive oil sample taken under UV light and get an instant purity verdict — no lab required.
 
@@ -8,8 +8,13 @@ Upload a smartphone photo of your olive oil sample taken under UV light and get 
 
 ## Features
 
-- **UV Fluorescence Analysis** — detects authentic chlorophyll fluorescence patterns
-- **XGBoost Model** — trained on 26 colour, HSV, LAB, and fluorescence image features
+- **UV Fluorescence Analysis** — extracts smartphone image channel signals from controlled lighting photos
+- **Physics-Informed Fluorescence Index Classifier** — primary camera model for the UV/flash demo
+- **Selected EEM ML Model** — compares multiple classifiers and saves the best validation performer
+- **Public Fluorescence Adulteration Model** — builds a 314-row EEM dataset from Zenodo and trains an adulteration classifier
+- **Azure Custom Vision Camera Model** — calls the published `ZaytounModel` classifier when Azure env vars are configured
+- **Rule-Based Camera Fraud Screen** — applies transparent RGB threshold logic for field screening
+- **Demo-Ready Final Verdict** — primary result comes from red/green/blue fluorescence indices, with Azure as supporting evidence
 - **Instant Results** — prediction in under a second
 - **Digital Report** — PDF-printable authenticity certificate
 - **History Log** — SQLite database stores last 20 predictions
@@ -24,7 +29,9 @@ zaytoun-vision/
 │   ├── main.py           ← FastAPI app (preprocessing + inference + SQLite)
 │   ├── requirements.txt
 │   ├── Dockerfile
-│   └── model.pkl         ← Place your trained model here
+│   ├── train_model.py    ← Reproducible EEM model training script
+│   ├── model.pkl         ← Trained EEM model artifact
+│   └── model_metrics.json← Validation metrics and model limitations
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx
@@ -56,12 +63,46 @@ zaytoun-vision/
 - Python 3.10+
 - Node.js 18+
 
-### 1. Add your model
+### 1. Train the EEM model
 
 ```bash
-# Copy your trained model into the backend directory
-cp /path/to/model.pkl zaytoun-vision/backend/model.pkl
+cd zaytoun-vision
+py -3.12 backend/train_model.py
 ```
+
+The default model predicts `quality_band` from EEM features:
+
+| Band | Label                 | Source aging steps |
+|------|-----------------------|--------------------|
+| 0    | fresh_or_lightly_aged | 0–2                |
+| 1    | oxidized              | 3–6                |
+| 2    | degraded              | 7–9                |
+
+Exact `aging_step` training is available with:
+
+```bash
+py -3.12 backend/train_model.py --target aging_step
+```
+
+Current `quality_band` validation metrics and the selected model name are written to `backend/model_metrics.json`.
+
+The current selected model is `vote_xgboost_logistic_histgb`, a soft-voting ensemble of XGBoost, logistic regression, and histogram gradient boosting. Its current holdout balanced accuracy is `0.6969`.
+
+The primary live camera model is the `Physics-informed UV Fluorescence Index Classifier`. It uses `red_670nm`, `green_530nm`, `blue_440nm`, red/blue ratio, green/blue ratio, and a chlorophyll index. This is the model to present in the hackathon demo because it matches the actual test: shine UV or flash and read the color response.
+
+Azure Custom Vision is configured separately with environment variables and used as supporting evidence. Use `backend/.env.example` as the template. The existing Azure project is published as `ZaytounModel` with classes `pure_evoo`, `light_adulteration`, and `heavy_adulteration`.
+
+The public fluorescence adulteration dataset is built from Zenodo record `19755088`:
+
+```bash
+py -3.12 backend/build_zenodo_eem_dataset.py
+py -3.12 backend/train_zenodo_adulteration_model.py
+```
+
+The current selected public EEM adulteration model is `vote_xgboost_extra_trees_svm`.
+It reaches `0.9621` holdout balanced accuracy and `0.8867` group-CV balanced accuracy on the generated 314-row EEM feature dataset.
+
+For the accuracy workflow, follow `docs/ACCURACY_PLAN.md`. It defines the capture protocol, blind-test folder layout, and the evaluation command for held-out camera images.
 
 ### 2. Start the backend
 
@@ -74,6 +115,7 @@ uvicorn main:app --reload --port 8000
 The API will be available at **http://localhost:8000**
 - Swagger docs: http://localhost:8000/docs
 - Health check: http://localhost:8000/health
+- Model info: http://localhost:8000/model-info
 
 ### 3. Start the frontend
 
@@ -129,10 +171,34 @@ curl -X POST http://localhost:8000/predict \
 }
 ```
 
+When Azure Custom Vision is configured, the response also includes `fluorescence_classifier`, `azure_custom_vision`, and `final_decision`. The `final_decision` result is driven by the fluorescence-index classifier, while Azure is shown as supporting evidence.
+
 ### `GET /health`
 
 ```json
 { "status": "ok", "model": "loaded" }
+```
+
+### `GET /model-info`
+
+Returns the loaded model target, feature names, validation summary, Azure Custom Vision status, and limitations.
+
+### `POST /predict-eem`
+
+Predicts the EEM `quality_band` from the 9 numeric EEM feature columns.
+
+```json
+{
+  "eem_mean": 19.25,
+  "eem_max": 599.92,
+  "eem_std": 52.34,
+  "eem_total": 611636.06,
+  "chlorophyll_mean": 32.90,
+  "chlorophyll_max": 418.12,
+  "uv_mean": 1.38,
+  "mid_ex_mean": 3.69,
+  "chlorophyll_ratio": 23.81
+}
 ```
 
 ### `GET /history`
@@ -141,29 +207,25 @@ Returns the last 20 predictions as a JSON array.
 
 ---
 
-## Image Preprocessing Pipeline
+## Camera Image Preprocessing Pipeline
 
 The backend applies this pipeline to every uploaded image:
 
-1. **Gray World White Balance** — normalises colour cast
-2. **Center ROI Crop** — removes 20% margin from each edge
-3. **Resize to 224×224** — standard input size
-4. **CLAHE on L channel** — contrast enhancement in LAB space
-5. **Gaussian Blur (3×3)** — noise reduction
-6. **Feature Extraction** — 26 features across RGB, HSV, LAB, fluorescence, and texture
+1. **Dynamic ROI crop** — removes image borders and background
+2. **Brightness mask** — keeps pixels above threshold 50
+3. **Channel means** — extracts masked RGB means
+4. **Count normalization** — maps 0–255 channel values to 0–1000 counts
+5. **Rule-based fraud screen** — evaluates red, green, and blue channel thresholds by lighting mode
 
 ---
 
-## Feature Set (26 features)
+## EEM Model Feature Set
 
-| Group        | Features                                          |
-|--------------|---------------------------------------------------|
-| RGB          | mean, std, skewness for R, G, B channels (9)      |
-| HSV          | mean, std for H, S, V channels (6)                |
-| LAB          | mean, std for L, A, B channels (6)                |
-| Fluorescence | fluorescence_intensity, fluorescence_ratio (2)    |
-| Texture      | texture_entropy (1)                               |
-| Brightness   | brightness_mean, brightness_std (2)               |
+The selected EEM model consumes these feature columns:
+
+`eem_mean`, `eem_max`, `eem_std`, `eem_total`, `chlorophyll_mean`, `chlorophyll_max`, `uv_mean`, `mid_ex_mean`, `chlorophyll_ratio`.
+
+The repository data does **not** contain real/fake/adulterated labels or labeled smartphone camera images. Camera fraud detection is therefore rule-based until a labeled image dataset is collected.
 
 ---
 
@@ -189,7 +251,7 @@ The backend applies this pipeline to every uploaded image:
 
 | Layer    | Technology                            |
 |----------|---------------------------------------|
-| Backend  | FastAPI, Python 3.10, OpenCV, XGBoost |
+| Backend  | FastAPI, Python 3.10, OpenCV, scikit-learn, XGBoost |
 | Database | SQLite (built-in)                     |
 | Frontend | React 18, Vite, TypeScript, Tailwind  |
 | Routing  | React Router v6                       |

@@ -1,0 +1,4 @@
+image_id,split,label,adulteration_pct,oil_brand,base_oil,adulterant,lighting,camera,container,notes
+sample_0001,train,pure_evoo,0,,,,365nm_uv,,clear_vial,
+sample_0002,blind_test,light_adulteration,10,,,sunflower,365nm_uv,,clear_vial,
+sample_0003,blind_test,heavy_adulteration,50,,,canola,365nm_uv,,clear_vial,

@@ -113,7 +113,7 @@ export default function History() {
                 <p className="text-gray-400 text-xs mb-6">Start by uploading a UV sample photo.</p>
                 <Link
                   to="/analyze"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1D9E75] text-white text-sm font-semibold hover:bg-green-600 transition-colors shadow-sm"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-olive-500 text-white text-sm font-semibold hover:bg-olive-600 transition-colors shadow-sm"
                 >
                   Analyze a sample
                 </Link>

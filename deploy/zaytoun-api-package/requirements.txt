@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-multipart
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+scipy
+scikit-learn==1.8.0
+xgboost==3.3.0
+pillow
+python-dateutil

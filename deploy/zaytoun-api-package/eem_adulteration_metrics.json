@@ -1,0 +1,215 @@
+{
+  "trained_at": "2026-06-26T20:20:54.863129+00:00",
+  "data_path": "C:\\Users\\User\\olive-oil\\data\\processed\\zenodo_eem_adulteration_features.csv",
+  "task": "public_eem_adulteration_classification",
+  "target": "adulteration_class",
+  "selected_model": "vote_xgboost_extra_trees_svm",
+  "model_type": "VotingClassifier",
+  "row_count": 314,
+  "feature_count": 17,
+  "feature_names": [
+    "eem_mean",
+    "eem_max",
+    "eem_std",
+    "eem_total",
+    "blue_430_480_mean",
+    "blue_430_480_max",
+    "green_500_560_mean",
+    "green_500_560_max",
+    "red_600_640_mean",
+    "red_600_640_max",
+    "uv_red_600_640_mean",
+    "uv_blue_430_480_mean",
+    "visible_430_640_total",
+    "red_blue_ratio",
+    "red_green_ratio",
+    "green_blue_ratio",
+    "red_visible_fraction"
+  ],
+  "classes": [
+    "heavy_adulteration",
+    "light_adulteration",
+    "pure_evoo_proxy"
+  ],
+  "class_distribution": {
+    "heavy_adulteration": 156,
+    "light_adulteration": 128,
+    "pure_evoo_proxy": 30
+  },
+  "group_cross_validation": {
+    "folds": 5,
+    "group": "system_zh",
+    "balanced_accuracy_mean": 0.8867,
+    "balanced_accuracy_std": 0.113,
+    "balanced_accuracy_scores": [
+      0.9728,
+      0.6722,
+      0.9583,
+      0.9583,
+      0.872
+    ]
+  },
+  "random_cross_validation": {
+    "folds": 5,
+    "balanced_accuracy_mean": 0.9573,
+    "balanced_accuracy_std": 0.0568,
+    "balanced_accuracy_scores": [
+      0.8443,
+      0.9892,
+      0.9744,
+      0.9892,
+      0.9892
+    ]
+  },
+  "candidate_models": {
+    "xgboost": {
+      "balanced_accuracy_mean": 0.8473,
+      "balanced_accuracy_std": 0.1117,
+      "balanced_accuracy_scores": [
+        0.9239,
+        0.6611,
+        0.9583,
+        0.7778,
+        0.9156
+      ]
+    },
+    "extra_trees": {
+      "balanced_accuracy_mean": 0.8858,
+      "balanced_accuracy_std": 0.0996,
+      "balanced_accuracy_scores": [
+        0.9425,
+        0.6917,
+        0.9583,
+        0.9444,
+        0.8918
+      ]
+    },
+    "random_forest": {
+      "balanced_accuracy_mean": 0.8345,
+      "balanced_accuracy_std": 0.1179,
+      "balanced_accuracy_scores": [
+        0.9728,
+        0.6472,
+        0.9306,
+        0.8611,
+        0.7609
+      ]
+    },
+    "hist_gradient_boosting": {
+      "balanced_accuracy_mean": 0.8448,
+      "balanced_accuracy_std": 0.0985,
+      "balanced_accuracy_scores": [
+        0.8582,
+        0.6722,
+        0.9583,
+        0.8194,
+        0.9156
+      ]
+    },
+    "svm_rbf": {
+      "balanced_accuracy_mean": 0.8689,
+      "balanced_accuracy_std": 0.0723,
+      "balanced_accuracy_scores": [
+        0.8205,
+        0.7583,
+        0.9583,
+        0.8798,
+        0.9275
+      ]
+    },
+    "logistic_regression": {
+      "balanced_accuracy_mean": 0.7827,
+      "balanced_accuracy_std": 0.0609,
+      "balanced_accuracy_scores": [
+        0.6799,
+        0.7778,
+        0.8194,
+        0.8635,
+        0.7729
+      ]
+    },
+    "vote_xgboost_extra_trees_svm": {
+      "balanced_accuracy_mean": 0.8867,
+      "balanced_accuracy_std": 0.113,
+      "balanced_accuracy_scores": [
+        0.9728,
+        0.6722,
+        0.9583,
+        0.9583,
+        0.872
+      ]
+    },
+    "vote_xgboost_logistic_histgb": {
+      "balanced_accuracy_mean": 0.8615,
+      "balanced_accuracy_std": 0.1065,
+      "balanced_accuracy_scores": [
+        0.9254,
+        0.6611,
+        0.9583,
+        0.8472,
+        0.9156
+      ]
+    }
+  },
+  "holdout": {
+    "test_size": 79,
+    "accuracy": 0.9494,
+    "balanced_accuracy": 0.9621,
+    "macro_f1": 0.9334,
+    "classification_report": {
+      "heavy_adulteration": {
+        "precision": 1.0,
+        "recall": 0.9487179487179487,
+        "f1-score": 0.9736842105263158,
+        "support": 39.0
+      },
+      "light_adulteration": {
+        "precision": 0.9375,
+        "recall": 0.9375,
+        "f1-score": 0.9375,
+        "support": 32.0
+      },
+      "pure_evoo_proxy": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1-score": 0.8888888888888888,
+        "support": 8.0
+      },
+      "accuracy": 0.9493670886075949,
+      "macro avg": {
+        "precision": 0.9125,
+        "recall": 0.9620726495726496,
+        "f1-score": 0.9333576998050682,
+        "support": 79.0
+      },
+      "weighted avg": {
+        "precision": 0.9544303797468355,
+        "recall": 0.9493670886075949,
+        "f1-score": 0.9504404471093345,
+        "support": 79.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        37,
+        2,
+        0
+      ],
+      [
+        0,
+        30,
+        2
+      ],
+      [
+        0,
+        0,
+        8
+      ]
+    ]
+  },
+  "limitations": [
+    "This model is trained on public spectrometer EEM matrices, not raw smartphone photos.",
+    "The pure_evoo_proxy class represents the highest olive-oil ratio in the archive, not guaranteed 100% pure EVOO.",
+    "Use blind camera photos under the project capture protocol before claiming field accuracy."
+  ]
+}

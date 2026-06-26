@@ -1,7 +1,8 @@
 import axios from 'axios';
-import type { PredictionResult, HistoryRecord, EemFeatureRecord } from '../types';
+import type { PredictionResult, HistoryRecord, EemFeatureRecord, ModelInfo } from '../types';
 
-const BASE_URL = 'http://localhost:8000';
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const BASE_URL = configuredBaseUrl || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -41,6 +42,14 @@ export async function fetchHistory(): Promise<HistoryRecord[]> {
  */
 export async function fetchEemFeatures(): Promise<EemFeatureRecord[]> {
   const response = await api.get<EemFeatureRecord[]>('/eem-features');
+  return response.data;
+}
+
+/**
+ * Fetch trained model metadata and validation summary.
+ */
+export async function fetchModelInfo(): Promise<ModelInfo> {
+  const response = await api.get<ModelInfo>('/model-info');
   return response.data;
 }
 

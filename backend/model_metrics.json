@@ -1,0 +1,197 @@
+{
+  "trained_at": "2026-06-26T16:40:28.303017+00:00",
+  "data_path": "eem_features.csv",
+  "task": "quality_band_classification",
+  "target": "quality_band",
+  "source_target": "aging_step",
+  "model_type": "VotingClassifier",
+  "selected_model": "vote_xgboost_logistic_histgb",
+  "row_count": 182,
+  "feature_count": 9,
+  "feature_names": [
+    "eem_mean",
+    "eem_max",
+    "eem_std",
+    "eem_total",
+    "chlorophyll_mean",
+    "chlorophyll_max",
+    "uv_mean",
+    "mid_ex_mean",
+    "chlorophyll_ratio"
+  ],
+  "class_labels": {
+    "0": "fresh_or_lightly_aged",
+    "1": "oxidized",
+    "2": "degraded"
+  },
+  "class_distribution": {
+    "0": 54,
+    "1": 74,
+    "2": 54
+  },
+  "holdout": {
+    "test_size": 46,
+    "accuracy": 0.6957,
+    "balanced_accuracy": 0.6969,
+    "macro_f1": 0.7036,
+    "classification_report": {
+      "0": {
+        "precision": 0.7692307692307693,
+        "recall": 0.7142857142857143,
+        "f1-score": 0.7407407407407407,
+        "support": 14.0
+      },
+      "1": {
+        "precision": 0.6190476190476191,
+        "recall": 0.6842105263157895,
+        "f1-score": 0.65,
+        "support": 19.0
+      },
+      "2": {
+        "precision": 0.75,
+        "recall": 0.6923076923076923,
+        "f1-score": 0.72,
+        "support": 13.0
+      },
+      "accuracy": 0.6956521739130435,
+      "macro avg": {
+        "precision": 0.7127594627594628,
+        "recall": 0.6969346443030654,
+        "f1-score": 0.7035802469135802,
+        "support": 46.0
+      },
+      "weighted avg": {
+        "precision": 0.7017638158942507,
+        "recall": 0.6956521739130435,
+        "f1-score": 0.6973993558776167,
+        "support": 46.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        10,
+        4,
+        0
+      ],
+      [
+        3,
+        13,
+        3
+      ],
+      [
+        0,
+        4,
+        9
+      ]
+    ]
+  },
+  "cross_validation": {
+    "folds": 5,
+    "scope": "training_split_model_selection",
+    "balanced_accuracy_mean": 0.7187,
+    "balanced_accuracy_std": 0.1149,
+    "balanced_accuracy_scores": [
+      0.5707,
+      0.8864,
+      0.6098,
+      0.7727,
+      0.7538
+    ]
+  },
+  "candidate_models": {
+    "xgboost": {
+      "balanced_accuracy_mean": 0.6922,
+      "balanced_accuracy_std": 0.0922,
+      "balanced_accuracy_scores": [
+        0.6124,
+        0.8258,
+        0.5682,
+        0.7424,
+        0.7121
+      ]
+    },
+    "extra_trees": {
+      "balanced_accuracy_mean": 0.6823,
+      "balanced_accuracy_std": 0.0816,
+      "balanced_accuracy_scores": [
+        0.6124,
+        0.7955,
+        0.5682,
+        0.7121,
+        0.7235
+      ]
+    },
+    "random_forest": {
+      "balanced_accuracy_mean": 0.6626,
+      "balanced_accuracy_std": 0.1211,
+      "balanced_accuracy_scores": [
+        0.529,
+        0.8258,
+        0.5152,
+        0.7311,
+        0.7121
+      ]
+    },
+    "hist_gradient_boosting": {
+      "balanced_accuracy_mean": 0.6658,
+      "balanced_accuracy_std": 0.0981,
+      "balanced_accuracy_scores": [
+        0.5337,
+        0.7841,
+        0.5682,
+        0.7424,
+        0.7008
+      ]
+    },
+    "svm_rbf": {
+      "balanced_accuracy_mean": 0.6763,
+      "balanced_accuracy_std": 0.0517,
+      "balanced_accuracy_scores": [
+        0.6124,
+        0.7652,
+        0.6402,
+        0.6818,
+        0.6818
+      ]
+    },
+    "logistic_regression": {
+      "balanced_accuracy_mean": 0.6967,
+      "balanced_accuracy_std": 0.0688,
+      "balanced_accuracy_scores": [
+        0.6427,
+        0.7955,
+        0.6098,
+        0.6818,
+        0.7538
+      ]
+    },
+    "vote_xgboost_logistic_forest": {
+      "balanced_accuracy_mean": 0.7088,
+      "balanced_accuracy_std": 0.0848,
+      "balanced_accuracy_scores": [
+        0.6124,
+        0.8258,
+        0.6098,
+        0.7424,
+        0.7538
+      ]
+    },
+    "vote_xgboost_logistic_histgb": {
+      "balanced_accuracy_mean": 0.7187,
+      "balanced_accuracy_std": 0.1149,
+      "balanced_accuracy_scores": [
+        0.5707,
+        0.8864,
+        0.6098,
+        0.7727,
+        0.7538
+      ]
+    }
+  },
+  "limitations": [
+    "This dataset labels fluorescence aging_step only; it does not contain authentic/fake/adulterated labels.",
+    "The default model predicts quality_band derived from aging_step: 0=fresh/lightly aged, 1=oxidized, 2=degraded.",
+    "The trained model consumes EEM feature rows, not smartphone camera pixels.",
+    "Camera fraud detection still requires a labeled image dataset collected under controlled lighting."
+  ]
+}
